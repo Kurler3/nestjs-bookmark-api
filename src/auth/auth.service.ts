@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { User, Bookmark } from "@prisma/client";
 import { DatabaseService } from "src/database/database.service";
+import { LoginDto, SignUpDto } from "./dto";
 
 @Injectable()
 export class AuthService {
@@ -9,7 +10,9 @@ export class AuthService {
         private databaseService: DatabaseService
     ) { }
     
-    signup() {
+    signup(
+        data: SignUpDto
+    ) {
 
         // 
 
@@ -17,7 +20,9 @@ export class AuthService {
     }
 
 
-    login() {
+    login(
+        data: LoginDto
+    ) {
         return 'login'
     }
 
