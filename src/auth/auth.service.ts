@@ -4,12 +4,16 @@ import { DatabaseService } from "src/database/database.service";
 import { LoginDto, SignUpDto } from "./dto";
 import { UserService } from "src/user/user.service";
 import * as argon from 'argon2';
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
 
     constructor(
         private userService: UserService,
+        private jwtService: JwtService,
+        private configService: ConfigService
     ) { }
     
     async signup(
@@ -19,12 +23,12 @@ export class AuthService {
         // Save new user in db
         const newUser = await this.userService.createUser(data);
 
-        //TODO Generate access and refresh tokens
+        // Generate access and refresh tokens
+        const accessToken = await this.signToken(newUser.id, newUser.email);
 
-
-        //TODO Return tokens
-
-        return newUser
+        return {
+            access_token: accessToken,
+        }
     }
 
 
@@ -48,7 +52,30 @@ export class AuthService {
 
         //TODO Generate access and refresh tokens
 
-        return 'login'
+        const accessToken = await this.signToken(user.id, user.email);
+
+        return {
+            access_token: accessToken,
+        }
+    }
+
+
+    async signToken(userId: number, email: string): Promise<string> {
+
+        const payload = {
+            sub: userId,
+            email,
+        }
+
+        const options = {
+            expiresIn: '15m', // Expires in 15 minutes
+            secret: this.configService.get('JWT_SECRET')
+        }
+
+        return this.jwtService.signAsync(
+            payload,
+            options
+        );
     }
 
 }

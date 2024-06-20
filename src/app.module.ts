@@ -8,11 +8,13 @@ import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
     AuthModule,
     UserModule,
     BookmarkModule,
     DatabaseModule,
-    ConfigModule.forRoot({})
   ],
 })
 export class AppModule {}
