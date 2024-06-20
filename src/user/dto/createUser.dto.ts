@@ -11,11 +11,13 @@ export class CreateUserDto {
 
     @Optional()
     @IsString()
-    firstName: string;
+    @IsNotEmpty()
+    firstName?: string;
 
     @IsString()
     @IsNotEmpty()
-    lastName: string;
+    @Optional()
+    lastName?: string;
 
     @IsStrongPassword()
     @IsString()

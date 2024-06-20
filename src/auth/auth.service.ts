@@ -3,7 +3,6 @@ import { User, Bookmark } from "@prisma/client";
 import { DatabaseService } from "src/database/database.service";
 import { LoginDto, SignUpDto } from "./dto";
 import { UserService } from "src/user/user.service";
-import * as argon from 'argon2';
 
 @Injectable()
 export class AuthService {
@@ -17,24 +16,15 @@ export class AuthService {
         data: SignUpDto
     ) {
 
-        // Check if user with this email already exists
-        const existingUser = await this.userService.getUserByEmail(data.email);
-
-        if(existingUser) {
-            throw new ForbiddenException();
-        }
-
-        // Hash password
-        const hash = argon.hash(data.password);
-
         // Save new user in db
+        const newUser = await this.userService.createUser(data);
+
+        //TODO Generate access and refresh tokens
         
 
-        // Generate access and refresh tokens
+        //TODO Return tokens
 
-        // Return tokens
-
-        return 'signup'
+        return newUser
     }
 
 

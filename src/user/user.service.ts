@@ -2,6 +2,8 @@ import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/c
 import { DatabaseService } from 'src/database/database.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import * as argon from 'argon2';
+import { User } from '@prisma/client';
+import exclude from 'src/utils/functions/excludeFields';
 
 @Injectable()
 export class UserService {
@@ -42,10 +44,10 @@ export class UserService {
             data: {
                 ...createUserDto,
                 hash,
-            }
+            },
         })
 
-        return newUser;
+        return exclude<User>(newUser, ['hash']);
 
     }
 
