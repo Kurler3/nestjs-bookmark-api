@@ -29,6 +29,7 @@ model User {
   bookmarks Bookmark[]
 
   @@map("users")
+  @@index([email])
 }
 
 model Bookmark {

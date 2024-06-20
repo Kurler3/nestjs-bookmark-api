@@ -14,7 +14,7 @@ export class UserService {
     async getUserByEmail(
         email: string,
     ) {
-        return this.databaseService.user.findFirst({
+        return this.databaseService.user.findUnique({
             where: {
                 email,
             }
