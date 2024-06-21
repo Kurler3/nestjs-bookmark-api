@@ -21,6 +21,17 @@ export class UserService {
         })
     }
 
+    // Get user by id
+    async getUserById(
+        id: number,
+    ) {
+        return this.databaseService.user.findUnique({
+            where: {
+                id,
+            }
+        })
+    }
+
     // Create new user
     async createUser(
         createUserDto: CreateUserDto
