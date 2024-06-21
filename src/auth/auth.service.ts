@@ -1,8 +1,6 @@
-import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { User, Bookmark } from "@prisma/client";
-import { DatabaseService } from "src/database/database.service";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { LoginDto, SignUpDto } from "./dto";
-import { UserService } from "src/user/user.service";
+import { UserService } from "../user/user.service";
 import * as argon from 'argon2';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from '@nestjs/config';

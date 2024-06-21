@@ -2,9 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { ConfigService } from '@nestjs/config';
-import { DatabaseService } from "src/database/database.service";
-import { UserService } from "src/user/user.service";
-import exclude from "src/utils/functions/excludeFields";
+import { UserService } from "../user/user.service";
+import exclude from "../utils/functions/excludeFields";
 
 
 @Injectable()

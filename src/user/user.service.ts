@@ -1,9 +1,9 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { DatabaseService } from '../database/database.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import * as argon from 'argon2';
 import { User } from '@prisma/client';
-import exclude from 'src/utils/functions/excludeFields';
+import exclude from '../utils/functions/excludeFields';
 
 @Injectable()
 export class UserService {
