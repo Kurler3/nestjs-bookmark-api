@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/createUser.dto';
 import * as argon from 'argon2';
 import { User } from '@prisma/client';
 import exclude from '../utils/functions/excludeFields';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class UserService {
@@ -62,4 +63,19 @@ export class UserService {
 
     }
 
-}
+    // Update user
+    async updateUser(
+        userId: number,
+        updateUserDto: UpdateUserDto
+    ) {
+
+        const updateUser = await this.databaseService.user.update({
+            where: {
+                id: userId,
+            },
+            data: updateUserDto,
+        })
+
+        return exclude(updateUser, ['hash']);
+    }
+}   

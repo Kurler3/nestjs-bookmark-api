@@ -1,12 +1,19 @@
-import { Test } from "@nestjs/testing";
-import { AppModule } from "../src/app.module";
-import { HttpStatus, INestApplication, ValidationPipe } from "@nestjs/common";
-import { DatabaseService } from "../src/database/database.service";
+import { Test } from '@nestjs/testing';
+import { AppModule } from '../src/app.module';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { DatabaseService } from '../src/database/database.service';
 import * as pactum from 'pactum';
-import { validAuthCreds } from "./auth";
+import {
+  invalidEmailCreds,
+  invalidPasswordCreds,
+  nonExistentAccountCreds,
+  validAuthCreds,
+  wrongPasswordCreds,
+} from './auth';
 
-describe('App (e2e', () => {
+const baseUrl = 'http://localhost:3333';
 
+describe('App (e2e)', () => {
   ////////////////////////////////////////////
   // INIT ////////////////////////////////////
   ////////////////////////////////////////////
@@ -16,18 +23,17 @@ describe('App (e2e', () => {
 
   // Init app module
   beforeAll(async () => {
-
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule,]
+      imports: [AppModule],
     }).compile();
 
     app = moduleRef.createNestApplication();
 
     app.useGlobalPipes(
       new ValidationPipe({
-        whitelist: true
-      })
-    )
+        whitelist: true,
+      }),
+    );
 
     // Get the prisma service
     prisma = app.get(DatabaseService);
@@ -46,84 +52,130 @@ describe('App (e2e', () => {
 
   // Auth
   describe('Auth', () => {
-
     // Sign up
     describe('Sign up', () => {
+      const signUpUrl = `${baseUrl}/auth/signup`;
 
       // Should be able to sign up
       it('Should be able to sign up', () => {
         return pactum
-        .spec()
-        .post('http://localhost:3333/auth/signup')
-        .withBody(validAuthCreds)
-        .expectStatus(HttpStatus.CREATED);
+          .spec()
+          .post(signUpUrl)
+          .withBody(validAuthCreds)
+          .expectStatus(HttpStatus.CREATED);
       });
-      
 
       // Shouldn't be able to sign up with an existing email
+      it("Shouldn't be able to sign up with an existing email", () => {
+        return pactum
+          .spec()
+          .post(signUpUrl)
+          .withBody(validAuthCreds)
+          .expectStatus(HttpStatus.FORBIDDEN);
+      });
 
       // Shouldn't be able to sign up without strong password
+      it("Shouldn't be bale to sign up without strong password", () => {
+        return pactum
+          .spec()
+          .post(signUpUrl)
+          .withBody(invalidPasswordCreds)
+          .expectStatus(HttpStatus.BAD_REQUEST);
+      });
 
       // Shouldn't be able to sign up without valid email
-
-
+      it("Shouldn't be able to sign up without valid email", () => {
+        return pactum
+          .spec()
+          .post(signUpUrl)
+          .withBody(invalidEmailCreds)
+          .expectStatus(HttpStatus.BAD_REQUEST);
+      });
     });
-
 
     // Login
     describe('Login', () => {
+      const loginUrl = `${baseUrl}/auth/login`;
 
+      // Shouldn't be able to login with non existing account (wrong email)
+      it("Shouldn't be able to login with non existing account (wrong email)", () => {
+        return pactum
+          .spec()
+          .post(loginUrl)
+          .withBody(nonExistentAccountCreds)
+          .expectStatus(HttpStatus.BAD_REQUEST);
+      });
+
+      // Shouldn't be able to login without correct password
+      it("Shouldn't be able to login without correct password", () => {
+        return pactum
+          .spec()
+          .post(loginUrl)
+          .withBody(wrongPasswordCreds)
+          .expectStatus(HttpStatus.UNAUTHORIZED);
+      });
+
+      // Should be able to login with correct credentials
+      it('Should be able to login with correct credentials', () => {
+        return pactum
+          .spec()
+          .post(loginUrl)
+          .withBody(validAuthCreds)
+          .expectStatus(HttpStatus.OK)
+          .stores('userAt', 'access_token');
+      });
     });
-
-  })
+  });
 
   // User
   describe('User', () => {
-    
+    const userUrl = `${baseUrl}/users`;
+
     // Get me
     describe('Get user', () => {
 
-    })
+      const getUserUrl = userUrl + '/me';
 
-    // Edit
-    describe('Edit user', () => {
+      it('Should get current user', () => {
+        return pactum
+        .spec()
+        .get(getUserUrl)
+        .withBearerToken('$S{userAt}')
+        .expectStatus(HttpStatus.OK)
+        .inspect()
+      })
 
-    })
-    
-
-  })
-
-
-  // Bookmars
-  describe('Bookmarks', () => {
-
-    // Create a bookmark
-    describe('Create bookmark', () => {
+      // Shouldn't be able to get user without access token
+      it('Shouldn\'t be able to get user without access token', () => {
+        return pactum
+        .spec()
+        .get(getUserUrl)
+        .expectStatus(HttpStatus.UNAUTHORIZED);
+      })
 
     });
 
-    // Update bookmark
-    describe('Update bookmark', () => {
+    //TODO Edit
+    describe('Edit user', () => {});
+  });
 
-    })
+  //TODO Bookmars
+  describe('Bookmarks', () => {
+    // Create a bookmark
+    describe('Create bookmark', () => {});
+
+    // Update bookmark
+    describe('Update bookmark', () => {});
 
     // Get bookmarks
-    describe('Get bookmarks', () => {
-
-    })
+    describe('Get bookmarks', () => {});
 
     // Get bookmark by id
-    describe('Get bookmark by id', () => {
-
-    })
+    describe('Get bookmark by id', () => {});
 
     // Delete bookmark
-    describe('Delete bookmark', () => {
-
-    })
-
-  })
-  
+    describe('Delete bookmark', () => {});
+  });
 
   ////////////////////////////////////////////
   // Clean up ////////////////////////////////
@@ -131,9 +183,5 @@ describe('App (e2e', () => {
 
   afterAll(() => {
     app.close();
-  })
-
-
-
-})
-
+  });
+});
