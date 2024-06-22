@@ -5,13 +5,20 @@ import { UserModule } from "../user/user.module";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { JwtStrategy } from "./jwt.strategy";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
     imports: [
         UserModule, 
-        JwtModule.register({
-            //TODO Hide
-            secret: "c909e901c857850bacbd94d81b6b115ee6aa52061453c4abc7008c3a4cd0192f",
+
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => {
+                return {
+                    secret: configService.get('JWT_SECRET'),
+                }
+            },
+            inject: [ConfigService]
         }),
         PassportModule,
     ],

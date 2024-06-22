@@ -5,7 +5,6 @@ import { ConfigService } from '@nestjs/config';
 import { UserService } from "../user/user.service";
 import exclude from "../utils/functions/excludeFields";
 
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 

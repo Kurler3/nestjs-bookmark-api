@@ -17,7 +17,7 @@ export class UserController {
         return user;
     }
 
-    @Patch('/update')
+    @Patch('/edit')
     async updateUser(
         @GetUser('id') userId: number,
         @Body() updateUserDto: UpdateUserDto

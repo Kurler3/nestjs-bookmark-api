@@ -10,6 +10,7 @@ import {
   validAuthCreds,
   wrongPasswordCreds,
 } from './auth';
+import { editUserBody } from './user';
 
 const baseUrl = 'http://localhost:3333';
 
@@ -155,12 +156,37 @@ describe('App (e2e)', () => {
 
     });
 
-    //TODO Edit
-    describe('Edit user', () => {});
+    // Edit
+    describe('Edit user', () => {
+
+        const editUserUrl = `${userUrl}/edit`
+
+        // Should be able to edit your own user
+        it('Should be able to edit your own user', () => {
+
+            return pactum
+            .spec()
+            .patch(editUserUrl)
+            .withBearerToken('$S{userAt}')
+            .withBody(editUserBody)
+            .expectStatus(HttpStatus.OK)
+        })
+
+        // Shouldn't be able to edit without an auth token
+        it(' Shouldn\'t be able to edit without an auth token', () => {
+          return pactum
+          .spec()
+          .patch(editUserUrl)
+          .withBody(editUserBody)
+          .expectStatus(HttpStatus.UNAUTHORIZED)
+      })
+
+    });
   });
 
   //TODO Bookmars
   describe('Bookmarks', () => {
+
     // Create a bookmark
     describe('Create bookmark', () => {});
 
@@ -175,6 +201,7 @@ describe('App (e2e)', () => {
 
     // Delete bookmark
     describe('Delete bookmark', () => {});
+    
   });
 
   ////////////////////////////////////////////
