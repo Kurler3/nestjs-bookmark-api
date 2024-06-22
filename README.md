@@ -19,3 +19,4 @@
   3. Install nest cli globally
   4. Install docker
   5. npm / yarn / pnpm start:dev
+  6. Create .env file with the database url and a jwt secret to use to sign tokens (example in .env.test)
