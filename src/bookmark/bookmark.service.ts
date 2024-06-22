@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateBookmarkDto, EditBookmarkDto } from './dto';
 import { DatabaseService } from '../database/database.service';
 
@@ -49,6 +49,10 @@ export class BookmarkService {
                 id: bookmarkId,
             },
         })
+
+        if(!bookmark) {
+            throw new BadRequestException('This bookmark doesn\'t exist');
+        }
 
         if(bookmark.userId !== userId) {
             throw new UnauthorizedException('You don\'t have access to this bookmark');

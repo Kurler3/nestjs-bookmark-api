@@ -25,3 +25,22 @@ export const nonExistentAccountCreds: LoginDto = {
     email: 'test3@gmail.com',
     password: '0G8|dJ~CBgNNyES+k5QxXtS'
 }
+
+//////////////////////////////////////
+// TEST USERS CREDS //////////////////
+//////////////////////////////////////
+
+export const testUser2Creds: SignUpDto = {
+    email: "test2@gmail.com",
+    password: 'j5h&1H5Z/c4EhYAK]Xfq4R"$]F'
+}
+
+///////////////////////////////////////
+// TOKENS /////////////////////////////
+///////////////////////////////////////
+
+export const getUserToken = (userNum: number) => {
+    return `$S{user1${userNum}Token}`;
+}
+
+
